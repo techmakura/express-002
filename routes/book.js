@@ -1,31 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const BookModel = require("../model/book");
+const auth = require("../middleware/auth");
 
 // Get all books(Read)
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
         const books = await BookModel.find({});
         console.log(books + " books");
-        res.send({ "result": books });
+        res.status(200).send({ "result": books });
     } catch (err) {
-        res.send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "This is some error" });
     }
 });
 
 // Get book that matches provided id
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
     try {
         const id = req.params.id;
         const books = await BookModel.findById(id).exec();
         console.log(books + " books");
-        res.send({ "result": books });
+        res.status(200).send({ "result": books });
     } catch (err) {
-        res.send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "This is some error" });
     }
 });
 // (Create) a new book
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     try {
         const { title, pages, price, language, published_year } = req.body;
 
@@ -38,15 +39,15 @@ router.post("/", async (req, res) => {
         }
         const Books = new BookModel(newBook);
         const response = await Books.save()
-        res.send({ "message": `Successfully created! ${response}` })
+        res.status(201).send({ "message": `Successfully created! ${response}` })
     } catch (err) {
         console.log(err + " err");
-        res.send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "This is some error" });
     }
 });
 
 // (updated) Update the book with provided id
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -66,21 +67,21 @@ router.put("/:id", async (req, res) => {
             { new: true, runValidators: true }
         );
 
-        res.send({ "message": "Successfully updated!" + response })
+        res.status(200).send({ "message": "Successfully updated!" + response })
     } catch (err) {
-        res.send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "This is some error" });
     }
 });
 
 // (Deleted) the book that matches the provided id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     try {
         const id = req.params.id;
         const response = await BookModel.findByIdAndDelete(id);
 
-        res.send({ "message": `Successfully Deleted! ${response}` })
+        res.status(200).send({ "message": `Successfully Deleted! ${response}` })
     } catch (err) {
-        res.send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "This is some error" });
     }
 });
 
