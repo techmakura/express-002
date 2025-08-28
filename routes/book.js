@@ -1,7 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const multer  = require('multer')
+const path = require("path");
 const BookModel = require("../model/book");
 const auth = require("../middleware/auth");
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, '../public/uploads'));
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname); // Unique file name
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
 // Get all books(Read)
 router.get('/', auth, async (req, res) => {
@@ -25,17 +38,20 @@ router.get('/:id', auth, async (req, res) => {
         res.status(500).send({ "Error": "This is some error" });
     }
 });
+
 // (Create) a new book
-router.post("/", auth, async (req, res) => {
+router.post("/", auth, upload.single('image'), async (req, res) => {
     try {
         const { title, pages, price, language, published_year } = req.body;
+        const image = req.file.filename;
 
         const newBook = {
             "title": title,
             "pages": pages,
             "price": price,
             "language": language,
-            "published_year": published_year
+            "published_year": published_year,
+            "cover_image": image
         }
         const Books = new BookModel(newBook);
         const response = await Books.save()

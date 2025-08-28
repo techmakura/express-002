@@ -10,7 +10,8 @@ const bookSchema = new Schema({
     language: {
         type: String,
         enum: ["eng", "nep"]
-    }
+    },
+    cover_image: String
 });
 
 const BookModel = mongoose.model("book", bookSchema);
