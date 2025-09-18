@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const GenreModel = require("../model/genre");
 const auth = require("../middleware/auth");
+const upload = require("../middleware/storage");
 
 // Get all books(Read)
 router.get('/', auth, async (req, res) => {
     try {
-        const books = await GenreModel.find({});
-        console.log(books + " books");
-        res.status(200).send({ "result": books });
+        const genre = await GenreModel.find({});
+        res.status(200).send(genre);
     } catch (err) {
         res.status(500).send({ "Error": "This is some error" });
     }
@@ -26,19 +26,18 @@ router.get('/:id', auth, async (req, res) => {
     }
 });
 // (Create) a new book
-router.post("/", auth, async (req, res) => {
+router.post("/", auth, upload.single('image'), async (req, res) => {
     try {
-        const { title, pages, price, language, published_year } = req.body;
+        const { title} = req.body;
+        const image = req.file ? req.file.filename : "";
 
-        const newBook = {
+        const newGenre = {
             "title": title,
-            "pages": pages,
-            "price": price,
-            "language": language,
-            "published_year": published_year
+            "cover_image": image
         }
-        const Books = new GenreModel(newBook);
-        const response = await Books.save()
+
+        const Genre = new GenreModel(newGenre);
+        const response = await Genre.save()
         res.status(201).send({ "message": `Successfully created! ${response}` })
     } catch (err) {
         console.log(err + " err");

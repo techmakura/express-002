@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const genreSchema = new Schema({
-    title: String
+    title: String,
+    cover_image: String,
 });
 
 const GenreModel = mongoose.model("Genre", genreSchema);

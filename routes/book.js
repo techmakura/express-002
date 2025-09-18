@@ -1,20 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const multer  = require('multer');
-const path = require("path");
+
 const BookModel = require("../model/book");
 const auth = require("../middleware/auth");
+const upload = require("../middleware/storage");
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../public/uploads'));
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname); // Unique file name
-    }
-  });
-  
-  const upload = multer({ storage: storage });
 
 // Get all books(Read)
 router.get('/', auth, async (req, res) => {
