@@ -12,7 +12,7 @@ const AuthorSchema = new Schema({
     },
     phone: Number,
     email: String
-});
+}, { timestamps: true });
 
 const AuthorModel = mongoose.model("Author", AuthorSchema);
 

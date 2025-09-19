@@ -24,7 +24,7 @@ const bookSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Publisher'
     }
-});
+}, { timestamps: true });
 
 const BookModel = mongoose.model("Book", bookSchema);
 

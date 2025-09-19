@@ -9,11 +9,25 @@ const upload = require("../middleware/storage");
 // Get all books(Read)
 router.get('/', auth, async (req, res) => {
     try {
-        const books = await BookModel.find({}).populate('author').populate('publisher');
+        const books = await BookModel.find({}).sort({ updatedAt: 'desc' }).populate('author').populate('publisher');
         console.log(books + " books");
         res.status(200).send(books);
     } catch (err) {
-        res.status(500).send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": err });
+    }
+});
+
+router.get('/filter', auth, async (req, res) => {
+    try {
+        const title = req.query.name;
+        const language = req.query.language;
+        const author = req.query.author;
+        const books = await BookModel.find({title: title, author: author}).sort({ updatedAt: 'desc' }).populate('author').populate('publisher');
+        console.log(books + " books");
+        res.status(200).send(books);
+    } catch (err) {
+        console.log(err, "errorr");
+        // res.status(500).send({ "Error": "Hello" });
     }
 });
 
@@ -25,7 +39,7 @@ router.get('/:id', auth, async (req, res) => {
         console.log(books + " books");
         res.status(200).send(books);
     } catch (err) {
-        res.status(500).send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": "test" });
     }
 });
 
@@ -51,7 +65,7 @@ router.post("/", auth, upload.single('image'), async (req, res) => {
         res.status(201).send({ "message": `Successfully created! ${response}` })
     } catch (err) {
         console.log(err + " err");
-        res.status(500).send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": err });
     }
 });
 
@@ -99,7 +113,18 @@ router.delete("/:id", auth, async (req, res) => {
 
         res.status(200).send({ "message": `Successfully Deleted! ${response}` })
     } catch (err) {
-        res.status(500).send({ "Error": "This is some error" });
+        res.status(500).send({ "Error": err });
+    }
+});
+
+router.get('/author/:author', auth, async (req, res) => {
+    try {
+        const author = req.params.author;
+        const books = await BookModel.find({author: author}).sort({ updatedAt: 'desc' }).populate('author').populate('publisher');
+        console.log(books + " books");
+        res.status(200).send(books);
+    } catch (err) {
+        res.status(500).send({ "Error": err });
     }
 });
 

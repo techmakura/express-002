@@ -6,7 +6,7 @@ const publisherSchema = new Schema({
     name: String,
     address: String,
     isActive: Boolean
-});
+}, { timestamps: true });
 
 const PublisherModel = mongoose.model("Publisher", publisherSchema);
 
